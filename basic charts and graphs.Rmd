@@ -4,13 +4,6 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-# World data
-
-# https://cran.r-project.org/web/packages/wpp2019/wpp2019.pdf
-install.packages("wpp2019")
-library(wpp2019)
-
- 
 ```
 
 ## R Markdown
