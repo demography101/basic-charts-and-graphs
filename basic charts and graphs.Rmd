@@ -1,0 +1,201 @@
+---
+title: "Basic charts and graphs"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# World data
+
+# https://cran.r-project.org/web/packages/wpp2019/wpp2019.pdf
+install.packages("wpp2019")
+library(wpp2019)
+
+ 
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+# Pie Chart
+
+# Simple Pie Chart
+votes <- c(25, 15, 35, 15, 10)
+juice <- c("Orange", "Apple", "Passion Fruit", "Lemonade", "Other")
+
+pie(votes, labels = juice, main="Favorite Juice")
+
+
+#Add labels and colors
+cols <- c("orange", "red4", "magenta", "gold", "pink")
+pct <- round(votes/sum(votes)*100)
+juice <- paste(juice, pct) # add percents to labels
+juice <- paste(juice,"%",sep="") # ad % to labels
+
+pie(votes, labels = juice, col=cols, main="Favorite Juice")
+
+
+# ggplot piechart
+pc <- data.frame(juice, votes, cols, pct)
+
+p1 <- ggplot(pc, aes (x="", y = votes, fill = factor(juice))) + 
+      geom_bar(width = 1, stat = "identity") +
+      geom_text(aes(label = paste(pct, "%")),
+                position = position_stack(vjust = 0.5)) + # add labels inside
+      scale_fill_manual(values = cols) + # change colors
+      theme_classic() +
+      theme(plot.title = element_text(hjust=0.5),
+            axis.line = element_blank(),
+            axis.text = element_blank(),
+            axis.ticks = element_blank()) +
+       labs(fill = "Juice", x = NULL, y = NULL,
+       title = "Favorite Juice") + 
+  coord_polar("y")
+
+p1  
+  
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+# Bar graph
+
+data("PlantGrowth")
+
+p2 <- ggplot(PlantGrowth, aes(x=group, y=weight, group=group), color = group) +
+  geom_bar(aes(fill = group), stat = "identity",position = "dodge") +
+  labs(y = "Weight",         #Adjust axis labels
+       x = "Control Group", 
+       title = "Experiment - Yield Plant Weight by Control Group", 
+       subtitle = "", # Add a sub title
+       caption = "Source: RStudio") +  # Cite source
+       theme_minimal() +
+       theme(legend.position = "none") # remove legend
+
+p2
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r pressure, echo=FALSE}
+# line graph
+sex <- c('M' = 'B12001_003', 'F' = 'B12001_012')
+nevermar <- c('M' = 'B12001_002', 'F' = 'B12001_011')
+
+nmM09 <- get_acs(geography="county", state = "FL", variables = 'B12001_003', 
+                 summary_var = 'B12001_002', geometry = TRUE,
+              year = 2009, output = 'tidy') %>%
+              group_by(NAME) %>%
+              mutate(perctM = round((estimate/summary_est)*100,1),
+                     year = 2009) %>%
+              select(GEOID,NAME,perctM,year) 
+
+nmF09 <- get_acs(geography="county", state = "FL", variables = 'B12001_012', 
+                 summary_var = 'B12001_011',
+              year = 2009, output = 'tidy') %>%
+              group_by(NAME) %>%
+              mutate(perctF = round((estimate/summary_est)*100,1),
+                     year = 2009) %>%
+              select(GEOID,NAME,perctF,year) 
+
+
+
+nmM <- rbind(nmM09,nmM10,nmM11,nmM12,nmM13,nmM14,nmM15,nmM16,nmM17,nmM18,nmM19)
+nmF <- rbind(nmF09,nmF10,nmF11,nmF12,nmF13,nmF14,nmF15,nmF16,nmF17,nmF18,nmF19)
+nm <- left_join(nmM,nmF)
+nm <- nm %>% rename(fips = GEOID)
+
+
+ggplot(nm, aes(year, total, colour=variable, fill = variable)) + 
+       geom_bar(aes(group = variable), stat = "identity",position = "dodge")  +
+       #scale_color_manual(values = c("navyblue")) + # change the color
+       theme(axis.text.x=element_text(angle = 60,hjust = 0.5,size = 6.5)) + # Change angle of x-axis labels
+       ylab("Total Fertility Rate (TFR)") +
+       labs(title = "Global Fertlity Rates (1950-2020)",
+            caption = "Source: United Nations, Department of Economic
+and Social Affairs, Population Division (2019)") 
+
+
+
+data(tfr)
+tfrdata <- tfr %>%
+  gather(Year, tfr, '1950-1955':'2015-2020') %>%
+  filter(country_code %in% c(900))
+
+p3 <- ggplot(tfrdata, aes(Year, tfr, colour=name)) + 
+       geom_line(aes(group = name))  +
+       scale_color_manual(values = c("navyblue")) + # change the color
+       theme(axis.text.x=element_text(angle = 60,hjust = 0.5,size = 6.5)) + # Change angle of x-axis labels
+       ylab("Total Fertility Rate (TFR)") +
+       labs(title = "Global Fertlity Rates (1950-2020)",
+            caption = "Source: United Nations, Department of Economic
+and Social Affairs, Population Division (2019)") 
+
+p3
+
+
+# Change line type
+ggplot(tfrdata, aes(Year, tfr, colour=name)) + 
+       geom_line(aes(group = name), linetype = "dashed")+ # Change line type
+       scale_color_manual(values = c("navyblue")) + # change the color
+       theme(axis.text.x=element_text(angle = 60,hjust = 0.5,size = 6.5)) + # Change angle of x-axis labels
+       ylab("Total Fertility Rate (TFR)") +
+       labs(title = "Global Fertlity Rates (1950-2020)",
+            caption = "Source: United Nations, Department of Economic
+and Social Affairs, Population Division (2019)") 
+
+
+```
+
+
+
+```{r pressure, echo=FALSE}
+# Scatter plot
+
+x <- c(2.1,10.5,4.2,15.3,13.6,19.3,5.6,3.2,12.6,3.8,14.1,
+       1.6,19.6,23.4,24.0,3.0,23.0,22.5,22.0,24.9,23.0)
+y <- c(1.9,11.4,4.7,16.2,13.2,18.9,5.4,2.9,12.4,21.0,5.0,23.1, 
+       4.1,2.6,3.2,20.0,4.1,24.5,21.0,24.0,23.0)
+
+plot(x, y) # Basic scatter plot
+plot(x, y, pch=8, col="green", cex = 1) # shape, color and size
+
+
+data(diamonds)
+head(diamonds)
+
+ggplot(diamonds, aes(x = carat, y = price)) + # basic ggplot scatter plot
+    geom_point()
+
+p4 <- ggplot(diamonds, aes(x = carat, y = price)) +
+    geom_point(aes(color = factor(cut), shape = cut), # change color and shape by group
+               size = 1) # change shape size
+
+p4
+
+
+
+```
+
+
+```{r cars}
+
+# Put all of the charts and graphs together
+# It doesn't look that pretty but you can make a mini dashboard with your charts and graphs
+
+install.packages("patchwork")
+library("patchwork")
+
+(p1 | p2) /
+  (p3 | p4)
+
+
+```
