@@ -12,9 +12,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-# Pie Chart
-
+```{r Pie Chart}
 # Simple Pie Chart
 votes <- c(25, 15, 35, 15, 10)
 juice <- c("Orange", "Apple", "Passion Fruit", "Lemonade", "Other")
@@ -56,8 +54,7 @@ p1
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-# Bar graph
+```{r Bar graph}
 
 data("PlantGrowth")
 
@@ -78,8 +75,7 @@ p2
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
-```{r pressure, echo=FALSE}
-# line graph
+```{r line graph}
 
 ggplot(nm, aes(year, total, colour=variable, fill = variable)) + 
        geom_bar(aes(group = variable), stat = "identity",position = "dodge")  +
@@ -124,8 +120,7 @@ and Social Affairs, Population Division (2019)")
 
 
 
-```{r pressure, echo=FALSE}
-# Scatter plot
+```{r scatter plot}
 
 x <- c(2.1,10.5,4.2,15.3,13.6,19.3,5.6,3.2,12.6,3.8,14.1,
        1.6,19.6,23.4,24.0,3.0,23.0,22.5,22.0,24.9,23.0)
@@ -153,7 +148,7 @@ p4
 ```
 
 
-```{r cars}
+```{r mini dashboard}
 
 # Put all of the charts and graphs together
 # It doesn't look that pretty but you can make a mini dashboard with your charts and graphs
