@@ -80,32 +80,6 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```{r pressure, echo=FALSE}
 # line graph
-sex <- c('M' = 'B12001_003', 'F' = 'B12001_012')
-nevermar <- c('M' = 'B12001_002', 'F' = 'B12001_011')
-
-nmM09 <- get_acs(geography="county", state = "FL", variables = 'B12001_003', 
-                 summary_var = 'B12001_002', geometry = TRUE,
-              year = 2009, output = 'tidy') %>%
-              group_by(NAME) %>%
-              mutate(perctM = round((estimate/summary_est)*100,1),
-                     year = 2009) %>%
-              select(GEOID,NAME,perctM,year) 
-
-nmF09 <- get_acs(geography="county", state = "FL", variables = 'B12001_012', 
-                 summary_var = 'B12001_011',
-              year = 2009, output = 'tidy') %>%
-              group_by(NAME) %>%
-              mutate(perctF = round((estimate/summary_est)*100,1),
-                     year = 2009) %>%
-              select(GEOID,NAME,perctF,year) 
-
-
-
-nmM <- rbind(nmM09,nmM10,nmM11,nmM12,nmM13,nmM14,nmM15,nmM16,nmM17,nmM18,nmM19)
-nmF <- rbind(nmF09,nmF10,nmF11,nmF12,nmF13,nmF14,nmF15,nmF16,nmF17,nmF18,nmF19)
-nm <- left_join(nmM,nmF)
-nm <- nm %>% rename(fips = GEOID)
-
 
 ggplot(nm, aes(year, total, colour=variable, fill = variable)) + 
        geom_bar(aes(group = variable), stat = "identity",position = "dodge")  +
